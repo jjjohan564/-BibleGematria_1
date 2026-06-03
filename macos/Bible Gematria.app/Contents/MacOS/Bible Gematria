@@ -1,0 +1,6 @@
+#!/bin/zsh
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+APP_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+
+export BIBLE_GEMATRIA_NO_PAUSE="1"
+exec "$APP_ROOT/BibleGematria.command"

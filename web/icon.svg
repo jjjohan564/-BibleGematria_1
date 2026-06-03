@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Bible Gematria">
+  <rect width="512" height="512" rx="92" fill="#f7f8f5"/>
+  <path d="M138 121h174c38 0 64 26 64 64v206H166c-29 0-52-23-52-52V145c0-13 11-24 24-24z" fill="#12343b"/>
+  <path d="M166 121h214c13 0 24 11 24 24v227c0 13-11 24-24 24H166c-29 0-52-23-52-52V173c0-29 23-52 52-52z" fill="#0e6278"/>
+  <path d="M171 153h185c11 0 20 9 20 20v176H172c-18 0-32-14-32-32V185c0-18 14-32 31-32z" fill="#fff7df"/>
+  <path d="M198 205h126M198 247h126M198 289h86" stroke="#12343b" stroke-width="22" stroke-linecap="round"/>
+  <path d="M163 350h213" stroke="#d3b56f" stroke-width="18" stroke-linecap="round"/>
+  <text x="256" y="454" text-anchor="middle" font-family="Georgia, serif" font-size="80" font-weight="700" fill="#12343b">א</text>
+</svg>
