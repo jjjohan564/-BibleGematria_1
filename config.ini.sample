@@ -1,0 +1,22 @@
+﻿; Copy this file to `config.ini` and fill in your local MariaDB credentials.
+;
+; IMPORTANT: The DATABASE NAME has a strict single source of truth:
+;   It MUST be set via the BIBLE_DB_NAME environment variable.
+;   It is deliberately NOT read from this file.
+;
+; This file only controls host, port, user, and password.
+; The database name is controlled exclusively by BIBLE_DB_NAME so that
+; you can easily target different databases (e.g. stepbibletest) without
+; editing files.
+;
+; On Windows/PowerShell: $env:BIBLE_DB_NAME only lasts for the current
+; terminal window. Use scripts/set-bible-db.ps1 (with -Persist for real permanence)
+; or see docs/HANDOFF-current.md.
+
+[mariadb]
+host     = 127.0.0.1
+port     = 3306
+user     = root
+password = YOUR_PASSWORD_HERE
+
+; database = (intentionally not used - use BIBLE_DB_NAME env var instead)

@@ -1,0 +1,22 @@
+﻿<?php
+// Copy this file to config.php and edit the values to match your local
+// MariaDB / MySQL installation. config.php is loaded by db.php.
+
+return [
+    'host'     => '127.0.0.1',
+    'port'     => 3306,
+    'user'     => 'root',
+    'password' => 'YOUR_PASSWORD_HERE',
+    'database' => 'stepbible',   // On many shared hosts this will be prefixed, e.g. 'youruser_stepbible' or 'biblewhe_stepbible'
+    // Set to true to display PDO errors in the browser (handy during setup).
+    'debug'    => true,
+
+    // === Remote API mode (for development without local database) ===
+    // When true, db.php will call the remote API instead of hitting MariaDB directly.
+    // This lets other developers work on the UI by hitting your live site.
+    'use_remote_api' => false,
+
+    // Base URL of the API (without trailing slash). Example:
+    // 'remote_api_base' => 'https://your-live-domain.com/bible',
+    'remote_api_base' => '',
+];

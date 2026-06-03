@@ -1,0 +1,2086 @@
+/* Bible Browser styles -- biblehub-style interlinear */
+:root {
+    --fg:        #1f2937;
+    --muted:     #6b7280;
+    --accent:    #1e40af;   /* Strong's blue */
+    --accent-bg: #eff6ff;
+    --bg:        #fafafa;
+    --card:      #ffffff;
+    --border:    #e5e7eb;
+    --orange:    #c2410c;   /* English / translation orange */
+    --gold:      #b45309;   /* transliteration */
+    --grammar:   #6366f1;   /* grammar code */
+    --gematria:  #1e40af;   /* gematria blue (matches accent) */
+    --variant:   #b45309;
+    --variant-bg:#fffbeb;
+    --hebrew:    "SBL Hebrew", "Ezra SIL", "Times New Roman", serif;
+    --greek:     "SBL Greek", "Gentium Plus", "Times New Roman", serif;
+    /* font sizes — overridden at runtime by display options JS */
+    --fsz-verse-orig-heb: 22px;
+    --fsz-verse-orig-grk: 18px;
+    --fsz-verse-eng:      16px;
+    --fsz-word-orig-heb: 26px;
+    --fsz-word-orig-grk: 18px;
+    --fsz-translit:      13px;
+    --fsz-word-eng:      13px;
+    --fsz-strongs:       12px;
+    --fsz-grammar:       11px;
+    --fsz-gematria:      12px;
+    --bg-alt:    #f3f4f6;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+}
+header {
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+}
+header h1 { margin: 0; font-size: 18px; color: var(--accent); }
+header .sub { color: var(--muted); font-size: 13px; }
+
+main { max-width: 1280px; margin: 0 auto; padding: 16px 24px; }
+main.bible-main { max-width: none; margin: 0; }
+body.full-width main,
+body.full-width .options-panel,
+body.full-width .gematria-panel { max-width: none; }
+
+.selector {
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+}
+.selector form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.selector label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+.selector select, .selector input[type=text] {
+    padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px;
+    background: white; font-size: 14px;
+}
+.selector input[type=text] { width: 160px; }
+.selector button {
+    padding: 6px 14px; background: var(--accent); color: white;
+    border: 0; border-radius: 4px; cursor: pointer; font-size: 14px;
+}
+
+.verse-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    margin-top: 16px; padding: 16px 20px;
+}
+.verse-card .ref-line {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px;
+}
+.verse-card .ref-line h2 { margin: 0; font-size: 22px; color: var(--accent); }
+.verse-card .ref-line .meta { color: var(--muted); font-size: 13px; }
+.verse-card .ref-line .nav {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+}
+.verse-card .ref-line .nav a {
+    padding: 4px 10px; background: var(--accent-bg);
+    color: var(--accent); text-decoration: none; border-radius: 4px; font-size: 13px;
+}
+.verse-card .ref-line .nav a:hover { background: var(--accent); color: white; }
+.verse-card .ref-line .nav .word-search-bar {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-right: 8px;
+}
+.verse-card .ref-line .nav .word-search-bar input,
+.verse-card .ref-line .nav .word-search-bar button {
+    font-size: 13px; padding: 3px 8px;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: white; color: var(--fg);
+}
+.verse-card .ref-line .nav .word-search-bar button {
+    background: var(--accent-bg); color: var(--accent); cursor: pointer;
+}
+.verse-card .ref-line .nav .word-search-bar button:hover {
+    background: var(--accent); color: white;
+}
+.verse-card .ref-line .nav .word-search-bar .search-clear {
+    width: 18px; height: 18px; padding: 0;
+    border-radius: 50%;
+    background: var(--muted); color: white;
+    font-size: 11px; line-height: 18px; text-align: center;
+    flex-shrink: 0; cursor: pointer;
+    border: none;
+}
+.verse-card .ref-line .nav .word-search-bar .search-clear:hover {
+    background: var(--accent); color: white;
+}
+.verse-card .ref-line .nav .word-search-bar .search-phrase-label {
+    font-size: 12px; color: var(--muted);
+    display: inline-flex; align-items: center; gap: 3px;
+    white-space: nowrap; cursor: pointer; user-select: none;
+}
+.verse-card .ref-line .nav .word-search-bar .search-phrase-label[hidden] {
+    display: none;
+}
+.verse-card .ref-line .nav .word-search-bar .search-phrase-label input[type="checkbox"] {
+    margin: 0; cursor: pointer;
+}
+
+.assembled .label {
+    color: var(--muted); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-top: 8px;
+}
+.assembled .original {
+     line-height: 1.7; padding: 6px 0;
+}
+.assembled .original.heb { font-family: var(--hebrew); direction: rtl; text-align: right; font-size: var(--fsz-verse-orig-heb);}
+.assembled .original.grk { font-family: var(--greek); font-size: var(--fsz-verse-orig-grk);}
+.assembled .english { font-size: var(--fsz-verse-eng); line-height: 1.6; padding: 6px 0; color: #111827; }
+/* KJV inline-tag display in the english verse text */
+.assembled .english .kjv-tag {
+    cursor: help;
+    border-bottom: 1px dotted var(--accent);
+    text-decoration: none;
+    color: inherit;
+}
+.assembled .english .kjv-tag:hover {
+    color: var(--accent);
+    background: var(--accent-bg);
+}
+.assembled .english .kjv-supplied {
+    font-style: italic;
+    color: var(--muted);
+}
+.assembled .verse-eng-label .english-source {
+    color: var(--muted);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 11px;
+}
+
+.sig-banner {
+    background: var(--variant-bg); border-left: 4px solid var(--variant);
+    padding: 6px 12px; margin-top: 8px; font-size: 13px; color: var(--variant);
+}
+
+/* ---------- gematria analysis panel ---------- */
+.gematria-panel {
+    max-width: 1280px; margin: 8px auto 0;
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 10px 16px;
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+}
+.gematria-panel[hidden] { display: none; }
+.gem-panel-label {
+    color: var(--muted); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em; white-space: nowrap; flex-shrink: 0;
+}
+.gem-rows { display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; }
+
+/* Word/Letter count row at the top of the gematria panel */
+.gem-row.gem-counts {
+    color: var(--muted);
+    padding-right: 8px;
+    border-right: 1px dashed var(--border);
+    margin-right: 4px;
+}
+.gem-row.gem-counts .gem-row-value { color: var(--gematria); }
+.gem-row .gem-row-sep { color: var(--border); padding: 0 4px; }
+
+.gem-row {
+    display: flex; align-items: baseline; gap: 6px;
+    font-size: 14px;
+}
+.gem-row-type {
+    color: var(--fg); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em; font-weight: 600;
+}
+.gem-row-value   { font-weight: 700; color: var(--gematria); font-size: var(--fsz-gematria); line-height: 1; }
+.gem-row-factors { font-weight: 700; color: var(--gematria); font-size: var(--fsz-gematria); line-height: 1; }
+/* Superscripts in factor expressions (e.g. 2³) must not push the line taller */
+.gem-row-factors sup { font-size: 0.75em; line-height: 0; vertical-align: super; }
+/* Gematria search hyperlinks — specificity raised to beat bw.css A:link {color:#dddddd} */
+a.gem-link,
+a.gem-link:link,
+a.gem-link:visited {
+    color: var(--gematria) !important; font-weight: 700 !important;
+    font-size: inherit !important; font-family: inherit !important;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--gematria);
+}
+a.gem-link:hover { border-bottom-style: solid; }
+a.gem-factor-link,
+a.gem-factor-link:link,
+a.gem-factor-link:visited {
+    color: var(--gematria) !important; font-weight: 700 !important;
+    font-size: inherit !important; font-family: inherit !important;
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+}
+a.gem-factor-link:hover { border-bottom-style: solid; }
+.gem-row-factors.is-prime {
+    color: var(--gematria); font-style: italic; font-size: calc(var(--fsz-gematria) * 0.85);
+}
+/* ---------- gematria / search results shared table styles ------------------ */
+.back-link { color: var(--accent); text-decoration: none; font-size: 14px; margin-right: 12px; }
+.back-link:hover { text-decoration: underline; }
+.view-counter {
+    max-width: 1280px; margin: 16px auto 4px;
+    text-align: right; font-size: 11px; color: var(--muted);
+    padding: 0 4px;
+}
+.view-counter a { color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--muted); }
+.view-counter a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.gr-article-link {
+    margin-left: auto;
+    color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600;
+    border: 1px solid var(--accent); border-radius: 4px; padding: 2px 10px;
+}
+.gr-article-link:hover { background: var(--accent); color: white; }
+.search-summary { font-size: 14px; color: var(--muted); }
+.search-summary strong { color: var(--fg); }
+.search-testament { font-weight: 700; font-size: 15px; color: var(--fg); margin: 12px 0 4px; }
+.search-table {
+    border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 14px;
+    table-layout: auto;
+}
+.search-table th:first-child,
+.search-table td:first-child { white-space: nowrap; width: 1%; }
+.search-table th:nth-child(2),
+.search-table td:nth-child(2) { width: 120px; }
+.search-table th {
+    text-align: left; padding: 6px 8px;
+    border-bottom: 2px solid var(--border); color: var(--muted);
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+    background-color: transparent; font-weight: normal;
+}
+.search-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.search-book { white-space: nowrap; font-weight: 600; color: var(--fg); }
+.search-verses a { color: var(--accent); text-decoration: none; white-space: nowrap; }
+.search-verses a:hover { text-decoration: underline; }
+/* gematria results table */
+.gem-word-cell { white-space: nowrap; }
+.gem-tlit  { color: var(--gold); font-size: 12px; font-style: italic; }
+.gem-eng   { color: var(--orange); font-size: 12px; }
+.gem-strongs { font-family: monospace; color: var(--accent); white-space: nowrap; }
+.gem-count-col { width: 36px; text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--muted); }
+.gem-clear {
+    margin-left: auto; padding: 2px 8px;
+    background: none; border: 1px solid var(--border); border-radius: 4px;
+    color: var(--muted); font-size: 12px; cursor: pointer;
+}
+.gem-clear:hover { border-color: var(--accent); color: var(--accent); }
+.gem-link-btn {
+    padding: 2px 8px;
+    background: none; border: 1px solid var(--border); border-radius: 4px;
+    color: var(--muted); font-size: 12px; cursor: pointer;
+}
+.gem-link-btn:hover { border-color: var(--accent); color: var(--accent); }
+.gem-link-btn.copied { border-color: var(--gematria); color: var(--gematria); }
+
+/* ---------- analysis / comparison / export tools ---------- */
+.study-panel {
+    margin: 14px 0 2px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+.study-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #f9fafb;
+}
+.study-tabs button {
+    min-height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-weight: 650;
+}
+.study-tabs button.active {
+    background: var(--card);
+    color: var(--accent);
+    box-shadow: 0 1px 4px rgba(17, 24, 39, 0.08);
+}
+.study-section {
+    margin-top: 12px;
+}
+.study-section[hidden] { display: none; }
+.analysis-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.analysis-head h3 {
+    margin: 1px 0 0;
+    font-size: 16px;
+    line-height: 1.2;
+}
+.analysis-kicker,
+.analysis-label {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.selection-chip {
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--accent-bg);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+}
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+.metric-card {
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fbfcfd;
+}
+.metric-card span,
+.metric-card small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.25;
+}
+.metric-card strong {
+    display: block;
+    margin: 2px 0;
+    color: var(--gematria);
+    font-size: 20px;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+.selection-reading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+.selection-reading p {
+    margin: 3px 0 0;
+    line-height: 1.5;
+}
+.selection-reading p.heb {
+    font-family: var(--hebrew);
+    direction: rtl;
+    text-align: right;
+    font-size: 20px;
+}
+.selection-reading p.grk {
+    font-family: var(--greek);
+    font-size: 18px;
+}
+.analysis-word-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+}
+.analysis-word-card {
+    padding: 9px 0 0;
+    border-top: 1px solid var(--border);
+    max-width: 100%;
+    min-width: 0;
+}
+.analysis-word-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    max-width: 100%;
+    min-width: 0;
+}
+.analysis-word-head strong {
+    font-size: 19px;
+    line-height: 1.2;
+}
+.analysis-word-head strong.heb {
+    font-family: var(--hebrew);
+    direction: rtl;
+}
+.analysis-word-head strong.grk {
+    font-family: var(--greek);
+}
+.analysis-word-head span {
+    color: var(--orange);
+    font-size: 13px;
+    text-align: right;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.analysis-word-meta {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.35;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+.letter-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+    max-width: 100%;
+    min-width: 0;
+}
+.letter-chip {
+    min-width: 42px;
+    display: inline-grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 1px;
+    padding: 5px 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+.letter-chip b {
+    color: var(--fg);
+    font-size: 18px;
+    line-height: 1.1;
+    font-family: var(--hebrew);
+    font-weight: 600;
+}
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.comparison-card {
+    min-width: 0;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+}
+.comparison-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+.comparison-top strong {
+    color: var(--accent);
+}
+.comparison-top span {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.comparison-text {
+    line-height: 1.55;
+}
+.comparison-text.heb {
+    font-family: var(--hebrew);
+    direction: rtl;
+    text-align: right;
+    font-size: 22px;
+}
+.comparison-text.grk {
+    font-family: var(--greek);
+    font-size: 18px;
+}
+.comparison-text.eng {
+    color: #111827;
+}
+.export-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+}
+.export-grid button {
+    min-height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 700;
+}
+.export-grid button:hover {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+}
+.export-status {
+    min-height: 18px;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ---------- biblehub-style interlinear grid ---------- */
+.interlinear {
+    margin: 16px 0 4px 0;
+    display: flex; flex-wrap: wrap;
+    gap: 14px 14px;
+    align-items: flex-start;
+    user-select: none;
+}
+/* Each verse is wrapped in a .verse-block; normally transparent to layout */
+.verse-block { display: contents; }
+/* In newlines mode, each verse-block becomes a full-width flex row */
+.interlinear.verse-newlines { display: block; }
+.interlinear.verse-newlines .verse-block {
+    display: flex; flex-wrap: wrap;
+    gap: 14px 14px;
+    align-items: flex-start;
+    padding-top: 10px;
+    margin-top: 4px;
+    border-top: 1px solid var(--border, #e5e7eb);
+}
+.interlinear.verse-newlines .verse-block:first-child {
+    padding-top: 0;
+    margin-top: 0;
+    border-top: none;
+}
+.interlinear.heb { direction: rtl; }
+.interlinear.heb .word-cell { text-align: center; }
+.interlinear.heb .verse-num { margin-left: 8px; margin-right: 0; }
+
+.verse-num {
+    font-size: 22px; font-weight: 700; color: var(--fg);
+    line-height: 1; padding-top: 36px;
+    min-width: 18px; margin-right: 8px;
+    user-select: none;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.verse-num-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.verse-order { font-size: 10px; font-weight: 400; color: var(--muted); line-height: 1; }
+
+.word-cell {
+    text-align: center;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    /* Width is content-driven (no min-width): the cell hugs its widest
+       child -- usually the English gloss or transliteration. Uniform
+       4px/6px padding makes all cells look consistent regardless. */
+    user-select: none;
+}
+.word-cell:hover { background: #f3f4f6; }
+.word-cell.selected { background: var(--accent-bg); outline: 2px solid var(--accent); }
+.word-cell.kjv-hl  { background: #fef3c7; outline: 2px solid #f59e0b; }
+.variant-btn {
+    display: block; width: 100%; height: 3px; margin-top: 3px;
+    background: var(--variant); border: none; padding: 0;
+    border-radius: 0 0 3px 3px; cursor: pointer; opacity: 0.6;
+    transition: height 0.1s, opacity 0.1s;
+}
+.variant-btn:hover { height: 5px; opacity: 1; }
+
+/* absent-variant state: word toggled off (not in critical text) */
+.word-cell.cell-absent { background: #f9f9f9; opacity: 0.45; outline: 1px dashed var(--border); }
+.word-cell.cell-absent .variant-btn { background: #9ca3af; }
+
+/* variant context menu */
+.variant-menu {
+    position: fixed; z-index: 1000;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+    min-width: 190px; padding: 4px 0; font-size: 13px;
+}
+.variant-menu-item {
+    padding: 7px 12px; cursor: pointer;
+    display: flex; flex-direction: column; gap: 2px;
+    border-left: 3px solid transparent;
+}
+.variant-menu-item:hover  { background: var(--accent-bg); }
+.variant-menu-item.active { border-left-color: var(--accent); }
+.vm-kind {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    font-weight: 600; color: var(--variant);
+}
+.vm-text  { color: var(--fg); }
+.vm-meta  { font-size: 10px; color: var(--muted); }
+
+.word-cell .gematria {
+    color: var(--gematria); font-size: var(--fsz-gematria); font-family: monospace; font-weight: 700;
+    margin-bottom: 2px; white-space: nowrap; min-height: 1em;
+    direction: ltr;
+}
+.word-cell .strongs {
+    color: var(--accent); font-size: var(--fsz-strongs); font-family: monospace;
+    margin-bottom: 2px; white-space: nowrap;
+}
+.word-cell .translit {
+    color: var(--gold); font-size: var(--fsz-translit); font-style: italic;
+    margin-bottom: 2px;
+}
+.word-cell .original {
+    line-height: 1.3; color: #111827; margin-bottom: 2px;
+}
+.word-cell .original.heb { font-family: var(--hebrew); font-size: var(--fsz-word-orig-heb); }
+.word-cell .original.grk { font-family: var(--greek); font-size: var(--fsz-word-orig-grk); }
+.word-cell .english {
+    color: var(--orange); font-size: var(--fsz-word-eng); margin-bottom: 2px; white-space: nowrap;
+}
+.word-cell .grammar {
+    color: var(--grammar); font-size: var(--fsz-grammar); font-family: monospace;
+    white-space: nowrap;
+}
+.word-cell .chunk-badge {
+    display: block; color: var(--muted); font-size: 9px;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px;
+}
+
+/* ---------- word detail panel (revealed on click) ---------- */
+.word-detail {
+    background: #fafbff; border: 1px solid var(--border); border-radius: 6px;
+    margin-top: 12px; padding: 12px 16px;
+    display: none;
+}
+.word-detail.shown { display: block; }
+.word-detail .wd-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 8px;
+}
+.word-detail .wd-head h3 {
+    margin: 0; font-size: 16px;
+}
+.word-detail .wd-close {
+    background: transparent; border: 0; color: var(--muted); font-size: 16px;
+    cursor: pointer;
+}
+.word-detail .wd-row { margin: 6px 0; font-size: 13px; }
+.word-detail .wd-row .k {
+    display: inline-block; min-width: 100px; color: var(--muted);
+    text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em;
+    vertical-align: top;
+}
+.word-detail .ed-pill {
+    display: inline-block; background: #e5e7eb; color: #374151;
+    padding: 1px 6px; margin: 0 2px 2px 0; border-radius: 3px;
+    font-size: 11px; font-family: monospace;
+}
+.word-detail .ed-pill.minor { opacity: 0.55; }
+.word-detail .variant {
+    background: var(--variant-bg); border-left: 3px solid var(--variant);
+    padding: 6px 10px; margin: 6px 0;
+}
+.word-detail .variant .vk {
+    color: var(--variant); font-weight: 600; text-transform: uppercase;
+    font-size: 10px; letter-spacing: 0.05em; margin-right: 6px;
+}
+.word-detail .morpheme {
+    display: inline-block; margin: 3px 6px 3px 0; padding: 3px 8px;
+    background: #f3f4f6; border-radius: 3px; font-size: 12px;
+}
+.word-detail .morpheme .role { color: var(--muted); font-size: 9.5px; text-transform: uppercase; margin-right: 4px; }
+.word-detail .morpheme .heb { font-family: var(--hebrew); font-size: 13px; }
+.word-detail .morpheme .gloss { color: var(--muted); font-size: 11px; margin-left: 4px; }
+.word-detail .link-list .link {
+    display: inline-block; margin: 2px 6px 2px 0; padding: 2px 8px;
+    background: #eef2ff; color: var(--accent); border-radius: 3px;
+    font-size: 12px;
+}
+
+/* ---------- summary blocks ---------- */
+.summary-verse-label {
+    margin: 10px 0 4px 0; color: var(--accent); font-weight: 600;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.summary-block {
+    background: #f9fafb; border: 1px solid var(--border); border-radius: 4px;
+    padding: 6px 10px; margin: 4px 0; font-size: 12px;
+}
+.summary-block .lbl {
+    display: inline-block; min-width: 90px; color: var(--muted);
+    text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em;
+    margin-right: 6px;
+}
+
+/* ---------- gear button + options panel ---------- */
+.selector .gear {
+    /* Pushes the gear to the right edge of the selector row */
+    margin-left: auto;
+    background: var(--accent); color: white; border: 0; border-radius: 4px;
+    padding: 6px 10px; cursor: pointer; display: inline-flex; align-items: center;
+    line-height: 0;
+}
+.selector .gear:hover { filter: brightness(1.1); }
+.selector .gear.active { background: var(--accent); outline: 2px solid var(--accent-bg); }
+
+.options-panel {
+    max-width: 1280px; margin: 8px auto 0;
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px 16px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px;
+}
+.options-panel[hidden] { display: none; }
+.options-title {
+    width: 100%;
+    color: var(--muted); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 4px;
+}
+.options-panel label {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 13px; color: #111827; white-space: nowrap;
+}
+.options-panel label input[type=checkbox] { margin: 0; }
+.options-group {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 2px 0;
+}
+.options-grouplabel {
+    color: var(--muted); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-right: 4px;
+}
+.options-divider {
+    width: 1px; align-self: stretch; background: var(--border); margin: 0 4px;
+}
+.options-size-section {
+    width: 100%; margin-top: 8px; padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center;
+}
+.options-size-section .options-grouplabel { width: 100%; margin-bottom: 4px; }
+.options-reset-row {
+    width: 100%; margin-top: 8px; padding-top: 8px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end;
+}
+.opts-reset-btn {
+    padding: 3px 10px; font-size: 12px; cursor: pointer;
+    background: none; border: 1px solid var(--border); border-radius: 4px;
+    color: var(--muted);
+}
+.opts-reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+.options-size-section .options-divider {
+    width: 100%; height: 1px; align-self: auto; margin: 4px 0;
+    background: var(--border);
+}
+.size-ctrl {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; color: var(--muted);
+}
+.size-ctrl input[type=number] {
+    width: 50px; padding: 2px 4px; border: 1px solid var(--border);
+    border-radius: 3px; font-size: 12px; text-align: center;
+}
+.size-ctrl input[type=color] {
+    width: 40px; height: 22px; padding: 1px 2px; border: 1px solid var(--border);
+    border-radius: 3px; cursor: pointer;
+}
+
+/* ---------- hide-class rules: instant client-side toggle ----------
+   Uses display:none (not visibility:hidden) so the hidden text doesn't
+   contribute to the cell's width. Otherwise long grammar codes like
+   'V-Qal-ConsecImperf-3ms' would silently stretch the cell even when
+   the Grammar checkbox is off. */
+.interlinear.hide-strongs  .word-cell .strongs  { display: none; }
+.interlinear.hide-translit .word-cell .translit { display: none; }
+.interlinear.hide-english  .word-cell .english  { display: none; }
+.interlinear.hide-grammar  .word-cell .grammar  { display: none; }
+
+.assembled.hide-verse-original .verse-orig-label,
+.assembled.hide-verse-original .original { display: none; }
+.assembled.hide-verse-english .verse-eng-label,
+.assembled.hide-verse-english .english { display: none; }
+.assembled.verse-newlines .assembled-verse { display: block; margin-top: 0.35em; }
+.assembled.verse-newlines .assembled-verse:first-child { margin-top: 0; }
+
+
+/* ---------- Strong's tooltip (hover over a cell's Strong's number) ---------- */
+.strongs-link { cursor: pointer; }
+.strongs-link:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+.strongs-tooltip {
+    position: absolute;
+    z-index: 9999;
+    max-width: 360px;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    /* pointer-events: auto so the tooltip itself can receive mouseenter
+       and the user can hover over it to copy text. */
+    pointer-events: auto;
+    user-select: text;
+    cursor: default;
+}
+.strongs-tooltip[hidden] { display: none; }
+
+.strongs-tooltip .st-head {
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+.strongs-tooltip .st-code {
+    color: var(--accent);
+    font-family: monospace; font-weight: 700; font-size: 14px;
+}
+.strongs-tooltip .st-lemma {
+    font-family: var(--hebrew), var(--greek), serif;
+    font-size: 18px;
+}
+.strongs-tooltip .st-translit {
+    color: var(--muted); font-size: 12px; margin-bottom: 4px;
+}
+.strongs-tooltip .st-xlit { font-style: italic; color: var(--gold); }
+.strongs-tooltip .st-pron { font-family: monospace; }
+.strongs-tooltip .st-desc { color: var(--fg); }
+.strongs-tooltip .st-miss,
+.strongs-tooltip .st-loading {
+    color: var(--muted); font-style: italic; font-size: 12px;
+}
+/* Multi-entry tooltip (e.g. a KJV word followed by `<NNNN> <0853>` shows
+   both Strong's entries stacked). */
+.strongs-tooltip .st-entry + .st-entry {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+}
+
+/* ── Verse preview tooltip ─────────────────────────────────────────────────── */
+.verse-tooltip {
+    position: absolute;
+    z-index: 9998;
+    max-width: 420px;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    padding: 8px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    pointer-events: auto;
+    user-select: text;
+    cursor: default;
+}
+.verse-tooltip[hidden] { display: none; }
+.verse-tooltip .vt-ref {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+}
+.verse-tooltip .vt-loading,
+.verse-tooltip .vt-miss { color: var(--muted); font-style: italic; font-size: 12px; }
+
+/* ── Grammar expansion tooltip ─────────────────────────────────────────────── */
+.word-cell .grammar { cursor: help; }
+
+.grammar-tooltip {
+    position: absolute;
+    z-index: 9997;
+    min-width: 120px;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    padding: 8px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    pointer-events: auto;
+    user-select: text;
+    cursor: default;
+}
+.grammar-tooltip[hidden] { display: none; }
+.grammar-tooltip .gt-pos {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 13px;
+}
+.grammar-tooltip .gt-details {
+    margin-top: 3px;
+    color: var(--fg);
+    font-size: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+}
+.grammar-tooltip .gt-sep {
+    color: var(--muted);
+    padding: 0 3px;
+    font-size: 11px;
+}
+.grammar-tooltip .gt-divider {
+    margin: 6px 0;
+    border-top: 1px solid var(--border);
+}
+.grammar-tooltip .gt-compound-label {
+    font-size: 10px;
+    font-family: monospace;
+    color: var(--muted);
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   Site-layout overrides — Bible browser is full-width
+   bwBanner.php wraps content in .centerdiv (950px) + a <table>.
+   Override all of that so the Bible browser fills the viewport.
+   ============================================================ */
+body { background: var(--bg) !important; }
+p.breadcrumb { display: none; }
+.centerdiv { width: 100% !important; max-width: none !important; position: static !important; }
+main h2 { background-image: none; margin: 0; padding: 0; }
+
+/* ── Mobile ────────────────────────────────────────────────────────────── */
+.ref-abbr { display: none; }
+@media (max-width: 768px) {
+    .ref-full { display: none; }
+    .ref-abbr { display: inline; }
+    .nav-label { display: none; }
+    .sel-label { display: none; }
+    .verse-card .ref-line .nav .word-search-bar { flex: 1; min-width: 0; }
+    .verse-card .ref-line .nav .word-search-bar #search-input { flex: 1; min-width: 0; }
+}
+.appbanner  { display: none; }
+/* The two-column table opened by bwBanner — full-width, no separator */
+.centerdiv > table              { width: 100%; border-spacing: 0; }
+.centerdiv > table > tbody > tr > td { border: none !important; padding: 0; }
+
+/* =====================================================================
+   Bible section layout: main content + collapsible sidebar
+   ===================================================================== */
+
+/* Flex wrapper containing <main class="bible-main"> + <aside> */
+.bible-layout {
+    display: flex;
+    align-items: flex-start;
+}
+
+main.bible-main {
+    flex: 1;
+    min-width: 0;   /* prevent flex overflow on narrow content */
+}
+
+/* ---------- Sidebar � desktop ---------- */
+.bible-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--border);
+    padding: 16px 14px;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+    transition: width 0.25s ease, padding 0.25s ease, opacity 0.2s ease;
+}
+.bible-sidebar.collapsed {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ---------- Sidebar content ---------- */
+.bible-sidebar-title {
+    margin: 0 0 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.bible-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.bible-sidebar-nav a {
+    display: block;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    transition: background 0.15s;
+}
+.bible-sidebar-nav a:hover { background: var(--bg-alt); }
+.bible-sidebar-nav a.active {
+    background: var(--accent-bg);
+    font-weight: 600;
+}
+
+/* ---------- Sidebar backdrop (mobile only) ---------- */
+#bible-sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 999;
+}
+#bible-sidebar-backdrop.visible { display: block; }
+
+/* ---------- Mobile: slide-in drawer ---------- */
+@media (max-width: 768px) {
+    .bible-layout { display: block; }
+
+    .bible-sidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 220px !important;
+        height: 100vh;
+        max-height: none;
+        padding: 24px 16px !important;
+        background: var(--card);
+        border-left: 1px solid var(--border);
+        box-shadow: -3px 0 16px rgba(0,0,0,0.15);
+        z-index: 1000;
+        opacity: 1 !important;
+        overflow-y: auto;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    }
+    .bible-sidebar.open { transform: translateX(0); }
+}
+
+/* =====================================================================
+   ELS (Equidistant Letter Sequence) grid — els.php
+   ===================================================================== */
+
+/* Width preset quick-pick buttons */
+.els-presets {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    margin-top: 10px; margin-bottom: 4px;
+}
+.els-presets-label {
+    font-size: 12px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-right: 4px;
+}
+.els-preset {
+    padding: 3px 9px; font-size: 13px; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: var(--card); color: var(--fg);
+    transition: background 0.1s, color 0.1s;
+}
+.els-preset:hover  { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
+.els-preset.active { background: var(--accent);    color: white;         border-color: var(--accent); }
+
+/* Info bar above the grid */
+.els-info {
+    font-size: 13px; color: var(--muted);
+    margin: 6px 0 8px; padding: 0 2px;
+}
+.els-info strong { color: var(--fg); }
+
+/* Scrollable wrapper */
+.els-wrap {
+    overflow: auto;
+    max-height: 72vh;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    margin-top: 4px;
+    padding: 10px;
+}
+
+/* The letter grid */
+.els-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--els-cols, 22), 1.9em);
+    gap: 1px;
+    font-family: "SBL Hebrew", "Ezra SIL", "Gentium Plus", "Courier New", monospace;
+    font-size: 1.1em;
+    line-height: 1;
+    width: max-content; /* prevents grid from compressing when wrap overflows */
+}
+
+/* RTL (Hebrew) — rows read right-to-left within each row, top-to-bottom */
+.els-grid.els-rtl { direction: rtl; }
+
+/* Individual letter cell */
+.els-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9em;
+    height: 1.9em;
+    border: 1px solid #e8e0d0;
+    border-radius: 2px;
+    cursor: default;
+    user-select: none;
+    transition: background 0.1s;
+}
+.els-cell:hover { background: var(--accent-bg); color: var(--accent); }
+
+/* Error / empty state */
+.els-error {
+    color: var(--orange); padding: 12px; font-size: 14px;
+}
+
+/* Vertical separator reused across presets + palette rows */
+.els-vsep {
+    align-self: stretch;
+    width: 1px; flex-shrink: 0;
+    background: var(--border);
+    margin: 0 6px;
+}
+
+/* ── Color palette row ───────────────────────────────────────────────── */
+.els-palette {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    margin-top: 8px;
+}
+.els-palette-label {
+    font-size: 12px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-right: 2px;
+}
+.els-swatch {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid transparent; outline: 2px solid transparent;
+    cursor: pointer; flex-shrink: 0;
+    transition: transform 0.12s, border-color 0.12s;
+}
+.els-swatch:hover { transform: scale(1.25); }
+.els-swatch.els-swatch-active {
+    border-color: var(--fg);
+    box-shadow: 0 0 0 2px var(--fg);
+    transform: scale(1.15);
+}
+
+/* Native <input type="color"> styled as a round swatch */
+#els-color-pick {
+    width: 26px; height: 26px; padding: 0;
+    border: 2px solid var(--border); border-radius: 50%;
+    cursor: pointer; background: none; flex-shrink: 0;
+    -webkit-appearance: none; appearance: none;
+    overflow: hidden;
+}
+#els-color-pick::-webkit-color-swatch-wrapper { padding: 0; }
+#els-color-pick::-webkit-color-swatch { border: none; border-radius: 50%; }
+#els-color-pick::-moz-color-swatch { border: none; border-radius: 50%; }
+
+/* Small action buttons (clear, preset save/load/delete) */
+.els-btn-sm {
+    padding: 3px 9px; font-size: 12px; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: var(--card); color: var(--fg);
+    transition: background 0.1s;
+}
+.els-btn-sm:hover    { background: var(--bg-alt); }
+.els-btn-primary     { background: var(--accent); color: #fff; border-color: var(--accent); }
+.els-btn-primary:hover { filter: brightness(1.1); }
+.els-btn-danger      { color: #c0392b; }
+.els-btn-danger:hover { background: #fdecea; }
+
+/* ── Preset save / load bar ──────────────────────────────────────────── */
+.els-preset-bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    margin-top: 6px; padding: 5px 8px;
+    background: var(--bg-alt); border: 1px solid var(--border); border-radius: 6px;
+    font-size: 13px;
+}
+#els-preset-select {
+    font-size: 13px; padding: 2px 4px;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: var(--card); color: var(--fg);
+    max-width: 180px;
+}
+#els-preset-name {
+    font-size: 13px; padding: 2px 6px;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: var(--card); color: var(--fg);
+}
+#els-preset-name:focus { outline: 2px solid var(--accent); }
+
+/* ── Highlighted cells ───────────────────────────────────────────────── */
+.els-cell.els-hi {
+    font-weight: 600;
+    position: relative; /* so the border/outline stacks above neighbours */
+    z-index: 1;
+}
+
+/* Empty indent cells — invisible spacers before the first letter */
+.els-cell-empty {
+    border-color: transparent;
+    pointer-events: none;
+    user-select: none;
+    background: transparent !important;
+    outline: none !important;
+}
+
+/* ── Color-sum badges (live inside the presets row) ─────────────────── */
+.els-sums {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    flex-grow: 1; /* fills remaining space in the presets row */
+    font-size: 14px;
+}
+.els-sums-label {
+    font-size: 12px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+}
+.els-sum-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+}
+.els-sum-dot {
+    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+}
+.els-sum-count { color: var(--muted); font-size: 12px; }
+
+/* ── Font-size range slider (in palette row) ─────────────────────────── */
+#els-font-size {
+    width: 80px; cursor: pointer;
+    accent-color: var(--accent);
+    vertical-align: middle;
+}
+#els-font-size-val {
+    font-size: 12px; color: var(--muted);
+    min-width: 28px; display: inline-block;
+}
+
+/* =====================================================================
+   Premium iPhone surface
+   Keeps the existing PHP/JS behavior, but reshapes the page into a touch-
+   first app surface on small screens.
+   ===================================================================== */
+body.bible-mobile-ready {
+    --fg:        #17191c;
+    --muted:     #68717c;
+    --accent:    #0e6278;
+    --accent-bg: #e8f5f6;
+    --bg:        #f7f8f5;
+    --card:      #fffefd;
+    --border:    #dfe4df;
+    --orange:    #a35124;
+    --gold:      #94690d;
+    --grammar:   #7047a8;
+    --gematria:  #0e6278;
+    --variant:   #9d3149;
+    --variant-bg:#fff2e8;
+    --bg-alt:    #edf1ef;
+}
+
+body.bible-mobile-ready {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+body.bible-mobile-ready .selector,
+body.bible-mobile-ready .verse-card,
+body.bible-mobile-ready .gematria-panel,
+body.bible-mobile-ready .word-detail,
+body.bible-mobile-ready .options-panel,
+body.bible-mobile-ready .study-panel,
+body.bible-mobile-ready .bible-sidebar {
+    box-shadow: 0 16px 50px rgba(23, 25, 28, 0.08);
+}
+
+body.bible-mobile-ready .selector select,
+body.bible-mobile-ready .selector input[type=text],
+body.bible-mobile-ready .selector button,
+body.bible-mobile-ready .gear,
+body.bible-mobile-ready .word-cell,
+body.bible-mobile-ready .gem-clear,
+body.bible-mobile-ready .gem-link-btn,
+body.bible-mobile-ready .study-tabs button,
+body.bible-mobile-ready .export-grid button {
+    touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+    html {
+        background:
+            radial-gradient(circle at 20% -10%, rgba(14, 98, 120, 0.14), transparent 34%),
+            linear-gradient(180deg, #fbfcfa 0%, var(--bg) 42%, #eef2ef 100%);
+    }
+
+    body.bible-mobile-ready {
+        background: transparent !important;
+        color: var(--fg);
+        font-size: 16px;
+        min-height: 100svh;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    body.bible-mobile-ready .local-header {
+        display: none;
+    }
+
+    body.bible-mobile-ready main,
+    body.bible-mobile-ready main.bible-main {
+        padding: calc(10px + env(safe-area-inset-top)) 10px calc(28px + env(safe-area-inset-bottom));
+    }
+
+    body.bible-mobile-ready .selector {
+        position: sticky;
+        top: env(safe-area-inset-top);
+        z-index: 70;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 46px;
+        gap: 8px;
+        align-items: end;
+        margin: 0 0 10px;
+        padding: 10px;
+        border: 1px solid rgba(14, 98, 120, 0.14);
+        border-radius: 8px;
+        background: rgba(255, 254, 253, 0.92);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    body.bible-mobile-ready .selector form {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    body.bible-mobile-ready .selector .sel-label {
+        display: none;
+    }
+
+    body.bible-mobile-ready .selector select,
+    body.bible-mobile-ready .selector input[type=text],
+    body.bible-mobile-ready .selector form button,
+    body.bible-mobile-ready .selector .gear {
+        min-width: 0;
+        min-height: 46px;
+        border-radius: 8px;
+        font-size: 16px;
+        line-height: 1.1;
+    }
+
+    body.bible-mobile-ready .selector select {
+        width: 100%;
+        padding: 0 34px 0 12px;
+        border: 1px solid rgba(14, 98, 120, 0.18);
+        color: var(--fg);
+        background:
+            linear-gradient(45deg, transparent 50%, var(--accent) 50%) right 15px center / 6px 6px no-repeat,
+            linear-gradient(135deg, var(--accent) 50%, transparent 50%) right 9px center / 6px 6px no-repeat,
+            #ffffff;
+        appearance: none;
+        -webkit-appearance: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    body.bible-mobile-ready #sel-book {
+        grid-column: 1 / -1;
+        font-weight: 700;
+    }
+
+    body.bible-mobile-ready #sel-chapter,
+    body.bible-mobile-ready #sel-verse {
+        grid-column: span 3;
+    }
+
+    body.bible-mobile-ready #sel-count,
+    body.bible-mobile-ready #sel-edition,
+    body.bible-mobile-ready .selector form button[type=submit] {
+        grid-column: span 2;
+    }
+
+    body.bible-mobile-ready .selector form button[type=submit],
+    body.bible-mobile-ready .selector .gear {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(14, 98, 120, 0.2);
+        background: linear-gradient(180deg, #16758d 0%, #0e6278 100%);
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    body.bible-mobile-ready .selector .gear {
+        width: 46px;
+        height: 46px;
+        margin: 0;
+        padding: 0;
+    }
+
+    body.bible-mobile-ready .verse-card {
+        margin: 10px 0 0;
+        padding: 14px;
+        border: 1px solid rgba(23, 25, 28, 0.08);
+        border-radius: 8px;
+        background: rgba(255, 254, 253, 0.96);
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        padding: 0 0 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid rgba(23, 25, 28, 0.08);
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line h2 {
+        font-size: 21px;
+        line-height: 1.15;
+        letter-spacing: 0;
+        color: var(--fg);
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line h2::after {
+        content: "Gematria study";
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line .nav {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 8px;
+        align-items: center;
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line .nav .word-search-bar {
+        grid-column: 1 / -1;
+        display: flex;
+        width: 100%;
+        margin: 0;
+        padding: 6px;
+        gap: 6px;
+        border: 1px solid rgba(14, 98, 120, 0.13);
+        border-radius: 8px;
+        background: #f7faf8;
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line .nav .word-search-bar input {
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--fg);
+        font-size: 16px;
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line .nav .word-search-bar button {
+        min-width: 42px;
+        height: 42px;
+        padding: 0;
+        border-radius: 7px;
+        border: 1px solid rgba(14, 98, 120, 0.16);
+        background: #ffffff;
+        color: var(--accent);
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line .nav .word-search-bar #search-btn {
+        background: var(--accent);
+        color: #ffffff;
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line .nav .word-search-bar .search-clear {
+        font-size: 13px;
+        line-height: 1;
+    }
+
+    body.bible-mobile-ready .verse-card .ref-line .nav a {
+        justify-self: end;
+        min-width: 46px;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        border: 1px solid rgba(14, 98, 120, 0.14);
+        background: #ffffff;
+        color: var(--accent);
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    body.bible-mobile-ready .assembled {
+        padding: 2px 0 4px;
+    }
+
+    body.bible-mobile-ready .assembled .label {
+        margin-top: 12px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+    }
+
+    body.bible-mobile-ready .assembled .original {
+        padding: 6px 0 2px;
+        line-height: 1.55;
+    }
+
+    body.bible-mobile-ready .assembled .original.heb {
+        font-size: max(var(--fsz-verse-orig-heb), 26px);
+    }
+
+    body.bible-mobile-ready .assembled .original.grk {
+        font-size: max(var(--fsz-verse-orig-grk), 22px);
+    }
+
+    body.bible-mobile-ready .assembled .english {
+        color: #2a2d31;
+        font-size: max(var(--fsz-verse-eng), 16px);
+    }
+
+    body.bible-mobile-ready .gematria-panel {
+        position: sticky;
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        z-index: 40;
+        margin: 12px -4px 0;
+        padding: 10px;
+        border: 1px solid rgba(14, 98, 120, 0.16);
+        border-radius: 8px;
+        background: rgba(255, 254, 253, 0.96);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+    }
+
+    body.bible-mobile-ready .gematria-panel[hidden] {
+        display: none;
+    }
+
+    body.bible-mobile-ready .gem-rows {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    body.bible-mobile-ready .gem-rows::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.bible-mobile-ready .gem-row {
+        flex: 0 0 auto;
+        min-height: 34px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        background: var(--accent-bg);
+    }
+
+    body.bible-mobile-ready .gem-row.gem-counts {
+        margin: 0;
+        padding-right: 10px;
+        border-right: 0;
+        background: #f3f1eb;
+    }
+
+    body.bible-mobile-ready .gem-clear,
+    body.bible-mobile-ready .gem-link-btn {
+        min-height: 34px;
+        border-radius: 8px;
+        background: #ffffff;
+        font-size: 12px;
+    }
+
+    body.bible-mobile-ready .study-panel {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top-color: rgba(23, 25, 28, 0.08);
+        box-shadow: none;
+    }
+
+    body.bible-mobile-ready .study-tabs {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+        padding: 4px;
+        border-color: rgba(14, 98, 120, 0.14);
+        border-radius: 8px;
+        background: #f4f7f5;
+    }
+
+    body.bible-mobile-ready .study-tabs button {
+        min-height: 42px;
+        border-radius: 7px;
+        font-size: 14px;
+    }
+
+    body.bible-mobile-ready .analysis-head {
+        margin-bottom: 9px;
+    }
+
+    body.bible-mobile-ready .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    body.bible-mobile-ready .metric-card {
+        min-height: 78px;
+        padding: 9px;
+        border-color: rgba(23, 25, 28, 0.08);
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    body.bible-mobile-ready .metric-card strong {
+        font-size: 22px;
+    }
+
+    body.bible-mobile-ready .metric-card small {
+        font-size: 10.5px;
+    }
+
+    body.bible-mobile-ready .selection-reading {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    body.bible-mobile-ready .selection-reading p {
+        margin-top: 2px;
+        font-size: 14px;
+    }
+
+    body.bible-mobile-ready .selection-reading p.heb {
+        font-size: 24px;
+    }
+
+    body.bible-mobile-ready .selection-reading p.grk {
+        font-size: 20px;
+    }
+
+    body.bible-mobile-ready .analysis-word-list {
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    body.bible-mobile-ready .analysis-word-card {
+        padding-top: 10px;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    body.bible-mobile-ready .analysis-word-head {
+        align-items: start;
+    }
+
+    body.bible-mobile-ready .analysis-word-head strong {
+        font-size: 22px;
+    }
+
+    body.bible-mobile-ready .analysis-word-head span {
+        max-width: 44%;
+        line-height: 1.2;
+    }
+
+    body.bible-mobile-ready .letter-strip {
+        gap: 6px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        width: 100%;
+        max-width: 100%;
+        padding-bottom: 2px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    body.bible-mobile-ready .letter-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.bible-mobile-ready .letter-chip {
+        flex: 0 0 46px;
+        min-width: 46px;
+        border-radius: 8px;
+    }
+
+    body.bible-mobile-ready .comparison-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    body.bible-mobile-ready .comparison-card {
+        padding: 11px 0;
+    }
+
+    body.bible-mobile-ready .comparison-top {
+        align-items: start;
+    }
+
+    body.bible-mobile-ready .comparison-top span {
+        text-align: right;
+        letter-spacing: 0.06em;
+    }
+
+    body.bible-mobile-ready .comparison-text.heb {
+        font-size: 24px;
+    }
+
+    body.bible-mobile-ready .comparison-text.grk {
+        font-size: 20px;
+    }
+
+    body.bible-mobile-ready .export-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    body.bible-mobile-ready .export-grid button {
+        min-height: 44px;
+        border-radius: 8px;
+        background: #ffffff;
+        font-size: 14px;
+    }
+
+    body.bible-mobile-ready .interlinear {
+        margin-top: 14px;
+        gap: 10px 8px;
+        align-items: stretch;
+    }
+
+    body.bible-mobile-ready .interlinear.heb {
+        direction: rtl;
+    }
+
+    body.bible-mobile-ready .verse-num {
+        flex: 0 0 100%;
+        min-width: 100%;
+        padding: 6px 0 0;
+        margin: 4px 0 -2px;
+        align-items: flex-start;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    body.bible-mobile-ready .interlinear.heb .verse-num {
+        align-items: flex-end;
+        margin-left: 0;
+    }
+
+    body.bible-mobile-ready .word-cell {
+        min-width: 68px;
+        min-height: 74px;
+        padding: 8px 8px 7px;
+        border: 1px solid rgba(23, 25, 28, 0.08);
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 6px 18px rgba(23, 25, 28, 0.05);
+    }
+
+    body.bible-mobile-ready .word-cell:hover {
+        background: #ffffff;
+    }
+
+    body.bible-mobile-ready .word-cell.selected {
+        border-color: var(--accent);
+        outline: 0;
+        background: #f3fbfb;
+        box-shadow: 0 0 0 2px rgba(14, 98, 120, 0.16), 0 10px 22px rgba(14, 98, 120, 0.10);
+    }
+
+    body.bible-mobile-ready .word-cell .gematria {
+        min-height: 16px;
+        font-size: max(var(--fsz-gematria), 12px);
+    }
+
+    body.bible-mobile-ready .word-cell .original {
+        color: #101214;
+    }
+
+    body.bible-mobile-ready .word-cell .original.heb {
+        font-size: max(var(--fsz-word-orig-heb), 27px);
+    }
+
+    body.bible-mobile-ready .word-cell .original.grk {
+        font-size: max(var(--fsz-word-orig-grk), 22px);
+    }
+
+    body.bible-mobile-ready .word-cell .english {
+        max-width: 88px;
+        white-space: normal;
+        line-height: 1.15;
+    }
+
+    body.bible-mobile-ready .word-cell .strongs,
+    body.bible-mobile-ready .word-cell .grammar,
+    body.bible-mobile-ready .word-cell .translit {
+        max-width: 92px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    body.bible-mobile-ready .word-detail.shown {
+        position: fixed;
+        left: 8px;
+        right: 8px;
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        z-index: 90;
+        max-height: 58svh;
+        overflow: auto;
+        margin: 0;
+        padding: 14px;
+        border-radius: 8px;
+        background: #fffefd;
+        box-shadow: 0 20px 70px rgba(23, 25, 28, 0.22);
+    }
+
+    body.bible-mobile-ready .word-detail .wd-head {
+        align-items: center;
+    }
+
+    body.bible-mobile-ready .word-detail .wd-head h3 {
+        font-size: 18px;
+    }
+
+    body.bible-mobile-ready .word-detail .wd-close {
+        min-height: 36px;
+        padding: 0 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #ffffff;
+        font-size: 14px;
+    }
+
+    body.bible-mobile-ready .options-panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1001;
+        max-height: 78svh;
+        overflow: auto;
+        margin: 0;
+        padding: 16px 14px calc(16px + env(safe-area-inset-bottom));
+        border-width: 1px 0 0;
+        border-radius: 8px 8px 0 0;
+        background: rgba(255, 254, 253, 0.98);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    body.bible-mobile-ready .options-panel[hidden] {
+        display: none;
+    }
+
+    body.bible-mobile-ready .options-title,
+    body.bible-mobile-ready .options-size-section,
+    body.bible-mobile-ready .options-reset-row {
+        grid-column: 1 / -1;
+    }
+
+    body.bible-mobile-ready .options-title {
+        font-size: 12px;
+        letter-spacing: 0.08em;
+    }
+
+    body.bible-mobile-ready .options-panel label {
+        min-height: 38px;
+        padding: 8px 10px;
+        border: 1px solid rgba(23, 25, 28, 0.08);
+        border-radius: 8px;
+        background: #ffffff;
+        white-space: normal;
+        font-size: 13px;
+    }
+
+    body.bible-mobile-ready .options-panel input[type=checkbox] {
+        accent-color: var(--accent);
+    }
+
+    body.bible-mobile-ready .options-group {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 0;
+    }
+
+    body.bible-mobile-ready .options-grouplabel {
+        grid-column: 1 / -1;
+        margin: 6px 0 -2px;
+    }
+
+    body.bible-mobile-ready .options-divider {
+        display: none;
+    }
+
+    body.bible-mobile-ready .options-size-section {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 4px;
+        padding-top: 10px;
+    }
+
+    body.bible-mobile-ready .options-size-section .options-grouplabel {
+        width: auto;
+        margin: 0;
+    }
+
+    body.bible-mobile-ready .size-ctrl {
+        justify-content: space-between;
+    }
+
+    body.bible-mobile-ready .size-ctrl input[type=number] {
+        width: 54px;
+        min-height: 30px;
+        border-radius: 7px;
+        font-size: 14px;
+    }
+
+    body.bible-mobile-ready .opts-reset-btn {
+        min-height: 40px;
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    body.bible-mobile-ready .strongs-tooltip,
+    body.bible-mobile-ready .grammar-tooltip,
+    body.bible-mobile-ready .verse-tooltip {
+        position: fixed;
+        left: 10px !important;
+        right: 10px !important;
+        bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+        top: auto !important;
+        max-width: none;
+        border-radius: 8px;
+        box-shadow: 0 18px 60px rgba(23, 25, 28, 0.18);
+    }
+
+    body.bible-mobile-ready .bible-sidebar {
+        width: min(84vw, 320px) !important;
+        padding: calc(18px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom)) !important;
+        background: #fffefd;
+    }
+
+    body.bible-mobile-ready .bible-sidebar-nav a {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    body.bible-mobile-ready .view-counter {
+        margin: 12px 0 0;
+        text-align: center;
+        font-size: 11px;
+    }
+
+    body.bible-mobile-ready .search-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    body.bible-mobile-ready .search-table th,
+    body.bible-mobile-ready .search-table td {
+        padding: 9px 10px;
+    }
+}
+
+@media (max-width: 430px) {
+    body.bible-mobile-ready main,
+    body.bible-mobile-ready main.bible-main {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    body.bible-mobile-ready .selector {
+        grid-template-columns: minmax(0, 1fr) 44px;
+        padding: 8px;
+    }
+
+    body.bible-mobile-ready .selector form {
+        gap: 7px;
+    }
+
+    body.bible-mobile-ready .selector select,
+    body.bible-mobile-ready .selector input[type=text],
+    body.bible-mobile-ready .selector form button,
+    body.bible-mobile-ready .selector .gear {
+        min-height: 44px;
+    }
+
+    body.bible-mobile-ready .selector .gear {
+        width: 44px;
+        height: 44px;
+    }
+
+    body.bible-mobile-ready .verse-card {
+        padding: 12px;
+    }
+
+    body.bible-mobile-ready .word-cell {
+        min-width: 64px;
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+}
+
+@media print {
+    .selector,
+    .options-panel,
+    .nav,
+    .gem-clear,
+    .gem-link-btn,
+    .study-tabs,
+    .export-grid,
+    .export-status,
+    .view-counter,
+    .bible-sidebar {
+        display: none !important;
+    }
+    body,
+    body.bible-mobile-ready {
+        background: #ffffff !important;
+        color: #111111;
+    }
+    main,
+    body.bible-mobile-ready main,
+    body.bible-mobile-ready main.bible-main {
+        padding: 0 !important;
+    }
+    .verse-card {
+        border: 0;
+        box-shadow: none !important;
+        margin: 0;
+        padding: 0;
+    }
+    .study-section[hidden] {
+        display: block;
+    }
+    .word-detail {
+        display: none !important;
+    }
+}

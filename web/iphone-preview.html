@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f8f5">
+<title>Bible Gematria iPhone Preview</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bible-mobile-ready">
+<div class="bible-layout">
+<main class="bible-main">
+    <div class="selector">
+        <form method="get" id="dd-form">
+            <label class="sel-label">Book</label>
+            <select name="book" id="sel-book">
+                <option selected>Genesis</option>
+            </select>
+            <label class="sel-label">Chapter</label>
+            <select name="chapter" id="sel-chapter">
+                <option selected>1</option>
+            </select>
+            <label class="sel-label">Verse</label>
+            <select name="verse" id="sel-verse">
+                <option selected>1</option>
+            </select>
+            <label class="sel-label sel-count-label">Range</label>
+            <select name="count" id="sel-count">
+                <option selected>None</option>
+                <option>1 vs</option>
+            </select>
+            <label class="sel-label">Source</label>
+            <select name="edition" id="sel-edition">
+                <option selected>BHS</option>
+                <option>LXX</option>
+            </select>
+            <button type="submit">Go</button>
+        </form>
+        <button type="button" id="gear-btn" class="gear" aria-expanded="false" aria-controls="options-panel" title="Display options" aria-label="Display options">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path fill="currentColor" d="M19.14 12.94a7.49 7.49 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.4 7.4 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.5.5 0 0 0-.61.22L2.71 8.84a.5.5 0 0 0 .12.64L4.86 11.06a7.5 7.5 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.43.34.68.24l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.26.42.5.42h3.84c.24 0 .45-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.25.1.54 0 .68-.24l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/>
+            </svg>
+        </button>
+    </div>
+
+    <div id="options-panel" class="options-panel" hidden>
+        <div class="options-title">Display</div>
+        <div class="options-group">
+            <span class="options-grouplabel">Gematria</span>
+            <label><input type="checkbox" data-opt="gem-std" checked> Standard</label>
+            <label><input type="checkbox" data-opt="gem-ord" checked> Ordinal</label>
+            <label><input type="checkbox" data-opt="gem-red" checked> Reduced</label>
+        </div>
+        <label><input type="checkbox" data-opt="translit" checked> Transliteration</label>
+        <label><input type="checkbox" data-opt="english" checked> English</label>
+        <label><input type="checkbox" data-opt="strongs" checked> Strong's</label>
+        <label><input type="checkbox" data-opt="grammar" checked> Grammar</label>
+        <div class="options-group">
+            <span class="options-grouplabel">Verse text</span>
+            <label><input type="checkbox" data-opt="verse-original" checked> Original</label>
+            <label><input type="checkbox" data-opt="verse-english" checked> English</label>
+            <label><input type="checkbox" data-opt="verse-newlines"> Newlines</label>
+            <label><input type="checkbox" data-opt="full-width"> Full width</label>
+        </div>
+        <div class="options-size-section">
+            <span class="options-grouplabel">Font sizes</span>
+            <label class="size-ctrl">Heb <input type="number" data-size="verse-orig-heb" value="22" min="8" max="72" step="1"> px</label>
+            <label class="size-ctrl">Greek <input type="number" data-size="verse-orig-grk" value="18" min="8" max="72" step="1"> px</label>
+            <label class="size-ctrl">English <input type="number" data-size="verse-eng" value="16" min="8" max="48" step="1"> px</label>
+            <label class="size-ctrl">Word <input type="number" data-size="word-orig-heb" value="26" min="8" max="72" step="1"> px</label>
+            <label class="size-ctrl">Gematria <input type="number" data-size="gematria" value="12" min="8" max="36" step="1"> px</label>
+            <label class="size-ctrl">Color <input type="color" data-color="gematria" value="#0e6278"></label>
+        </div>
+        <div class="options-reset-row">
+            <button type="button" id="opts-reset-btn" class="opts-reset-btn">Reset to defaults</button>
+        </div>
+    </div>
+
+    <div class="verse-card">
+        <div class="ref-line">
+            <h2><span class="ref-full">Genesis 1:1</span><span class="ref-abbr">Gen&nbsp;1:1</span></h2>
+            <div class="nav">
+                <div id="word-search-bar" class="word-search-bar">
+                    <input type="text" id="search-input" placeholder="Search reference, word, phrase, or H0430">
+                    <button type="button" id="search-clear" class="search-clear" title="Clear" aria-label="Clear search" hidden>x</button>
+                    <button type="button" id="search-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M21 19.59l-5.4-5.4a7 7 0 1 0-1.41 1.41L19.59 21 21 19.59zM11 16a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>
+                    </button>
+                </div>
+                <a href="#" aria-label="Previous verse">&#8249;</a>
+                <a href="#" aria-label="Next verse">&#8250;</a>
+            </div>
+        </div>
+
+        <div class="assembled">
+            <div class="label verse-orig-label">Original</div>
+            <div class="original heb">בראשית ברא אלהים את השמים ואת הארץ</div>
+            <div class="label verse-eng-label">English <span class="english-source">(KJV)</span></div>
+            <div class="english">In the beginning God created the heaven and the earth.</div>
+        </div>
+
+        <div id="gematria-panel" class="gematria-panel" hidden>
+            <div id="gem-rows" class="gem-rows"></div>
+            <button id="gem-clear" class="gem-clear" title="Clear selection" style="display:none">x clear</button>
+            <button id="gem-link-btn" class="gem-link-btn" title="Copy deep link to clipboard" style="display:none">copy link</button>
+        </div>
+
+        <div class="study-panel" id="study-panel" data-ref="Genesis 1:1" data-edition="BHS">
+            <div class="study-tabs" role="tablist" aria-label="Study tools">
+                <button type="button" class="active" data-study-tab="audit">Audit</button>
+                <button type="button" data-study-tab="compare">Compare</button>
+                <button type="button" data-study-tab="export">Export</button>
+            </div>
+            <section class="study-section active" data-study-panel="audit">
+                <div class="analysis-head">
+                    <div>
+                        <div class="analysis-kicker">Selection</div>
+                        <h3 id="selection-scope">Whole verse</h3>
+                    </div>
+                    <div id="selection-chip" class="selection-chip">Live</div>
+                </div>
+                <div id="selection-summary" class="metric-grid"></div>
+                <div class="selection-reading">
+                    <div>
+                        <div class="analysis-label">Original</div>
+                        <p id="selection-original" class="heb"></p>
+                    </div>
+                    <div>
+                        <div class="analysis-label">Meaning</div>
+                        <p id="selection-meaning"></p>
+                    </div>
+                </div>
+                <div id="analysis-word-list" class="analysis-word-list"></div>
+            </section>
+            <section class="study-section" data-study-panel="compare" hidden>
+                <div class="comparison-grid">
+                    <article class="comparison-card">
+                        <div class="comparison-top"><strong>BHS</strong><span>Hebrew text</span></div>
+                        <div class="comparison-text heb">בראשית ברא אלהים את השמים ואת הארץ</div>
+                    </article>
+                    <article class="comparison-card">
+                        <div class="comparison-top"><strong>KJV</strong><span>full verse translation</span></div>
+                        <div class="comparison-text eng">In the beginning God created the heaven and the earth.</div>
+                    </article>
+                </div>
+            </section>
+            <section class="study-section" data-study-panel="export" hidden>
+                <div class="export-grid">
+                    <button type="button" data-export="copy">Copy</button>
+                    <button type="button" data-export="txt">TXT</button>
+                    <button type="button" data-export="csv">CSV</button>
+                    <button type="button" data-export="json">JSON</button>
+                    <button type="button" data-export="pdf">PDF</button>
+                </div>
+                <div id="export-status" class="export-status" aria-live="polite"></div>
+            </section>
+        </div>
+
+        <div class="interlinear heb" id="interlinear" data-edition="BHS">
+            <div class="verse-block">
+                <div class="verse-num">1</div>
+                <div class="word-cell" data-pos="1" data-word-id="1" data-verse-num="1" data-gem-std="913" data-gem-ord="76" data-gem-red="13" data-letter-count="6">
+                    <div class="gematria"></div>
+                    <div class="original heb">בראשית</div>
+                    <div class="translit">bereshit</div>
+                    <div class="english">beginning</div>
+                    <div class="strongs">H7225</div>
+                    <div class="grammar">N-fs</div>
+                </div>
+                <div class="word-cell" data-pos="2" data-word-id="2" data-verse-num="1" data-gem-std="203" data-gem-ord="23" data-gem-red="5" data-letter-count="3">
+                    <div class="gematria"></div>
+                    <div class="original heb">ברא</div>
+                    <div class="translit">bara</div>
+                    <div class="english">created</div>
+                    <div class="strongs">H1254</div>
+                    <div class="grammar">V-qal</div>
+                </div>
+                <div class="word-cell" data-pos="3" data-word-id="3" data-verse-num="1" data-gem-std="86" data-gem-ord="41" data-gem-red="14" data-letter-count="5">
+                    <div class="gematria"></div>
+                    <div class="original heb">אלהים</div>
+                    <div class="translit">elohim</div>
+                    <div class="english">God</div>
+                    <div class="strongs">H0430</div>
+                    <div class="grammar">N-mp</div>
+                </div>
+                <div class="word-cell" data-pos="4" data-word-id="4" data-verse-num="1" data-gem-std="401" data-gem-ord="23" data-gem-red="5" data-letter-count="2">
+                    <div class="gematria"></div>
+                    <div class="original heb">את</div>
+                    <div class="translit">et</div>
+                    <div class="english">object</div>
+                    <div class="strongs">H0853</div>
+                    <div class="grammar">dir-obj</div>
+                </div>
+                <div class="word-cell" data-pos="5" data-word-id="5" data-verse-num="1" data-gem-std="395" data-gem-ord="53" data-gem-red="17" data-letter-count="5">
+                    <div class="gematria"></div>
+                    <div class="original heb">השמים</div>
+                    <div class="translit">hashamayim</div>
+                    <div class="english">heaven</div>
+                    <div class="strongs">H8064</div>
+                    <div class="grammar">N-md</div>
+                </div>
+                <div class="word-cell" data-pos="6" data-word-id="6" data-verse-num="1" data-gem-std="407" data-gem-ord="29" data-gem-red="11" data-letter-count="3">
+                    <div class="gematria"></div>
+                    <div class="original heb">ואת</div>
+                    <div class="translit">ve'et</div>
+                    <div class="english">and</div>
+                    <div class="strongs">H0853</div>
+                    <div class="grammar">conj</div>
+                </div>
+                <div class="word-cell" data-pos="7" data-word-id="7" data-verse-num="1" data-gem-std="296" data-gem-ord="53" data-gem-red="17" data-letter-count="4">
+                    <div class="gematria"></div>
+                    <div class="original heb">הארץ</div>
+                    <div class="translit">ha'aretz</div>
+                    <div class="english">earth</div>
+                    <div class="strongs">H0776</div>
+                    <div class="grammar">N-fs</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</div>
+<script src="js/options.js"></script>
+<script src="js/gematria.js"></script>
+<script src="js/word-selection.js"></script>
+<script src="js/analysis.js"></script>
+</body>
+</html>
