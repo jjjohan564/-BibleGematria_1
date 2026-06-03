@@ -17,6 +17,9 @@
     const meaningEl = document.getElementById('selection-meaning');
     const wordListEl = document.getElementById('analysis-word-list');
     const exportStatus = document.getElementById('export-status');
+    const formationsStatus = document.getElementById('formations-status');
+    const formationsResults = document.getElementById('formations-results');
+    const formationsRefresh = document.getElementById('formations-refresh');
 
     const detailEl = document.getElementById('word-detail');
     const detailTitleEl = document.getElementById('wd-title');
@@ -308,6 +311,132 @@
         detailEl.classList.add('shown');
     }
 
+    function formationTargetKey(section) {
+        if (!section.usingSelection) return '';
+        return section.words.map(w => [w.position, w.original, w.lang].join(':')).join('|');
+    }
+
+    function formationTargets(section) {
+        if (!section.usingSelection || section.words.length === 0) return [];
+        const targets = [];
+        const seen = new Set();
+        if (section.words.length > 1) {
+            targets.push({
+                label: 'Selected phrase',
+                text: section.original,
+                lang: section.words[0].lang,
+                wordCount: section.words.length
+            });
+        }
+        section.words.slice(0, 8).forEach((word, idx) => {
+            const key = word.lang + '|' + word.original;
+            if (seen.has(key)) return;
+            seen.add(key);
+            targets.push({
+                label: 'Word ' + (idx + 1),
+                text: word.original,
+                lang: word.lang,
+                wordCount: 1
+            });
+        });
+        return targets;
+    }
+
+    function renderFormationGroup(target, data) {
+        const targetMeta = data && data.target ? data.target : {};
+        const wordForms = (data && data.word_forms) || [];
+        const phraseForms = (data && data.phrase_forms) || [];
+        const total = wordForms.length + phraseForms.length;
+        const tooLarge = data && data.too_large;
+
+        const cards = [];
+        wordForms.forEach(item => cards.push(renderFormationCard(item, 'Word')));
+        phraseForms.forEach(item => cards.push(renderFormationCard(item, 'Phrase')));
+
+        return (
+            '<article class="formation-target">' +
+                '<div class="formation-target-top">' +
+                    '<div><span>' + esc(target.label) + '</span><strong class="' + (target.lang === 'Hebrew' ? 'heb' : 'grk') + '">' + esc(target.text) + '</strong></div>' +
+                    '<em>' + esc(targetMeta.letter_count || 0) + ' letters</em>' +
+                '</div>' +
+                (tooLarge ? '<p class="formation-note">Phrase search skipped for long selections; word formations still shown.</p>' : '') +
+                (total ? '<div class="formation-card-grid">' + cards.join('') + '</div>'
+                       : '<p class="formation-empty">No alternate coherent formations found in the corpus.</p>') +
+            '</article>'
+        );
+    }
+
+    function renderFormationCard(item, type) {
+        const refs = (item.refs || []).join(', ');
+        const meta = [
+            item.translation,
+            item.transliteration,
+            item.strongs,
+            refs ? 'Refs ' + refs : '',
+            (item.occurrences || 0) + 'x'
+        ].filter(Boolean).join(' · ');
+        return (
+            '<div class="formation-card">' +
+                '<div class="formation-type">' + esc(type) + '</div>' +
+                '<strong>' + esc(item.text || '') + '</strong>' +
+                '<span>' + esc(meta) + '</span>' +
+            '</div>'
+        );
+    }
+
+    let lastFormationKey = '';
+    let formationRequestId = 0;
+
+    async function refreshFormations(force) {
+        if (!formationsStatus || !formationsResults) return;
+        const section = buildSection();
+        const key = formationTargetKey(section);
+        if (!force && key !== '' && key === lastFormationKey && formationsResults.innerHTML.trim() !== '') return;
+        lastFormationKey = key;
+
+        if (!section.usingSelection) {
+            formationsStatus.textContent = 'Select one word or a short phrase first.';
+            formationsResults.innerHTML = '';
+            return;
+        }
+        if (section.words.length > 8 || section.totals.letters > 40) {
+            formationsStatus.textContent = 'Select up to 8 words and 40 letters. Longer selections can become too broad.';
+            formationsResults.innerHTML = '';
+            return;
+        }
+
+        const targets = formationTargets(section);
+        if (targets.length === 0) {
+            formationsStatus.textContent = 'No selectable letters found.';
+            formationsResults.innerHTML = '';
+            return;
+        }
+
+        const requestId = ++formationRequestId;
+        formationsStatus.textContent = 'Searching real Bible forms...';
+        formationsResults.innerHTML = '';
+
+        try {
+            const responses = await Promise.all(targets.map(target => {
+                const qs = new URLSearchParams({
+                    api: 'formations',
+                    lang: target.lang,
+                    text: target.text
+                });
+                return fetch('api.php?' + qs.toString(), { headers: { Accept: 'application/json' } })
+                    .then(response => response.ok ? response.json() : Promise.reject(new Error('HTTP ' + response.status)))
+                    .then(data => ({ target, data }));
+            }));
+            if (requestId !== formationRequestId) return;
+            formationsStatus.textContent = 'Filtered to existing Bible words and contiguous phrases.';
+            formationsResults.innerHTML = responses.map(result => renderFormationGroup(result.target, result.data)).join('');
+        } catch (err) {
+            if (requestId !== formationRequestId) return;
+            formationsStatus.textContent = 'Full formations search needs the PHP/MySQL app; the static preview cannot run it.';
+            formationsResults.innerHTML = '';
+        }
+    }
+
     function rebuild() {
         const section = buildSection();
         if (scopeEl) scopeEl.textContent = section.scope;
@@ -317,6 +446,9 @@
         renderSummary(section);
         renderWords(section);
         renderDetail(section);
+        if (document.querySelector('[data-study-tab="forms"].active')) {
+            refreshFormations(false);
+        }
         return section;
     }
 
@@ -452,8 +584,13 @@
                 if (active) panel.removeAttribute('hidden');
                 else panel.setAttribute('hidden', '');
             });
+            if (tab === 'forms') refreshFormations(false);
         });
     });
+
+    if (formationsRefresh) {
+        formationsRefresh.addEventListener('click', () => refreshFormations(true));
+    }
 
     document.querySelectorAll('[data-export]').forEach(button => {
         button.addEventListener('click', () => {
