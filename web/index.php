@@ -514,6 +514,7 @@ if ($actual_count > 0) {
         <div class="study-tabs" role="tablist" aria-label="Study tools">
             <button type="button" class="active" data-study-tab="audit">Audit</button>
             <button type="button" data-study-tab="compare">Compare</button>
+            <button type="button" data-study-tab="forms">Forms</button>
             <button type="button" data-study-tab="export">Export</button>
         </div>
 
@@ -551,6 +552,18 @@ if ($actual_count > 0) {
                     </article>
                 <?php endforeach; ?>
             </div>
+        </section>
+
+        <section class="study-section" data-study-panel="forms" hidden>
+            <div class="formations-head">
+                <div>
+                    <div class="analysis-kicker">Letter formations</div>
+                    <h3>Real Bible words and phrases only</h3>
+                </div>
+                <button type="button" id="formations-refresh" class="formation-refresh">Refresh</button>
+            </div>
+            <div id="formations-status" class="formation-status">Select a word or short phrase, then open Forms.</div>
+            <div id="formations-results" class="formations-results"></div>
         </section>
 
         <section class="study-section" data-study-panel="export" hidden>

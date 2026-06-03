@@ -13,6 +13,8 @@ require_once __DIR__ . '/db.php';
 
 const SEARCH_RESULT_LIMIT       = 6001;   // verse-list LIMIT (search.php trims to 6000)
 const SEARCH_GEMATRIA_OCC_LIMIT = 6000;   // gematria total-occurrence cap
+const SEARCH_FORMATION_WORD_LIMIT   = 50;
+const SEARCH_FORMATION_PHRASE_LIMIT = 30;
 
 // Escape LIKE special characters in a user-supplied string so that '%' and '_'
 // are treated as literals, not wildcards. Duplicated here from search.php so
@@ -52,6 +54,217 @@ function search_normalize_query(string $text, string $lang): string {
         ["\u{1FB3}",         "\u{1FC3}",         "\u{1FF3}"],
         $text
     );
+}
+
+function formation_letters(string $text, string $lang): string {
+    $lang = strtolower($lang);
+    $text = preg_replace('/\s*\([^)]+\)/u', '', $text);
+    $text = str_replace(['/', '\\'], '', trim($text));
+
+    if ($lang === 'hebrew') {
+        if (function_exists('normalizer_normalize')) {
+            $text = normalizer_normalize($text, Normalizer::NFD);
+        }
+        $text = preg_replace('/[\x{0591}-\x{05C7}\x{FB1E}]/u', '', $text);
+        $text = strtr($text, [
+            'ך' => 'כ',
+            'ם' => 'מ',
+            'ן' => 'נ',
+            'ף' => 'פ',
+            'ץ' => 'צ',
+        ]);
+        preg_match_all('/[\x{05D0}-\x{05EA}]/u', $text, $m);
+        return implode('', $m[0] ?? []);
+    }
+
+    if (function_exists('normalizer_normalize')) {
+        $text = normalizer_normalize($text, Normalizer::NFD);
+    }
+    $text = str_replace("\u{0345}", 'ι', $text);
+    $text = preg_replace('/[\x{0300}-\x{036F}]/u', '', $text);
+    $text = mb_strtolower($text);
+    $text = str_replace('ς', 'σ', $text);
+    preg_match_all('/[\x{03B1}-\x{03C9}]/u', $text, $m);
+    return implode('', $m[0] ?? []);
+}
+
+function formation_signature(string $letters): string {
+    if ($letters === '') return '';
+    $chars = mb_str_split($letters);
+    sort($chars, SORT_STRING);
+    return implode('', $chars);
+}
+
+function formation_ref(array $row): string {
+    return (string)$row['osis_code'] . ' ' . (int)$row['chapter'] . ':' . (int)$row['verse'];
+}
+
+function formation_push_occurrence(array &$group, array $row): void {
+    $ref = formation_ref($row);
+    if (!isset($group['seen'][$ref])) {
+        $group['seen'][$ref] = true;
+        if (count($group['refs']) < 6) $group['refs'][] = $ref;
+    }
+    $group['occurrences']++;
+}
+
+function bible_letter_formations(string $lang, string $text): array {
+    $lang = strtolower(trim($lang)) === 'hebrew' ? 'Hebrew' : 'Greek';
+    $letters = formation_letters($text, $lang);
+    $signature = formation_signature($letters);
+    $letter_count = mb_strlen($letters);
+
+    $empty = [
+        'target' => [
+            'text' => $text,
+            'language' => $lang,
+            'letters' => $letters,
+            'letter_count' => $letter_count,
+            'signature' => $signature,
+        ],
+        'word_forms' => [],
+        'phrase_forms' => [],
+        'too_large' => false,
+    ];
+
+    if ($letter_count < 2 || $signature === '') return $empty;
+
+    if (should_use_remote_api()) {
+        $resp = remote_api_call('formations', ['lang' => $lang, 'text' => $text]);
+        return is_array($resp) ? $resp : $empty;
+    }
+
+    $pdo = bible_pdo();
+
+    $word_groups = [];
+    $len_min = max(1, $letter_count - 2);
+    $len_max = $letter_count + 2;
+    $stmt = $pdo->prepare(
+        "SELECT w.text_original, w.transliteration, w.translation, w.strongs_primary,
+                w.text_search, b.osis_code, b.book_order, w.chapter, w.verse
+           FROM word w
+           JOIN book b ON b.id = w.book_id
+          WHERE w.language = ?
+            AND w.text_search IS NOT NULL
+            AND CHAR_LENGTH(w.text_search) BETWEEN ? AND ?
+          ORDER BY b.book_order, w.chapter, w.verse, w.position
+          LIMIT 20000"
+    );
+    $stmt->execute([$lang, $len_min, $len_max]);
+    foreach ($stmt->fetchAll() as $row) {
+        $cand_letters = formation_letters((string)($row['text_search'] ?: $row['text_original']), $lang);
+        if (mb_strlen($cand_letters) !== $letter_count) continue;
+        if (formation_signature($cand_letters) !== $signature) continue;
+
+        $key = $cand_letters . '|' . ($row['strongs_primary'] ?? '') . '|' . ($row['translation'] ?? '');
+        if (!isset($word_groups[$key])) {
+            $word_groups[$key] = [
+                'kind' => 'word',
+                'text' => $row['text_original'],
+                'letters' => $cand_letters,
+                'translation' => $row['translation'],
+                'transliteration' => $row['transliteration'],
+                'strongs' => $row['strongs_primary'],
+                'occurrences' => 0,
+                'refs' => [],
+                'seen' => [],
+            ];
+        }
+        formation_push_occurrence($word_groups[$key], $row);
+    }
+    foreach ($word_groups as &$group) unset($group['seen']);
+    unset($group);
+    $word_forms = array_values($word_groups);
+    usort($word_forms, fn($a, $b) => ($b['occurrences'] <=> $a['occurrences']) ?: strcmp((string)$a['text'], (string)$b['text']));
+    $word_forms = array_slice($word_forms, 0, SEARCH_FORMATION_WORD_LIMIT);
+
+    $phrase_forms = [];
+    $too_large = $letter_count > 28;
+    if (!$too_large) {
+        $stmt = $pdo->prepare(
+            "SELECT w.text_original, w.translation, w.text_search,
+                    b.osis_code, b.book_order, w.chapter, w.verse, w.position
+               FROM word w
+               JOIN book b ON b.id = w.book_id
+              WHERE w.language = ?
+                AND w.text_search IS NOT NULL
+              ORDER BY b.book_order, w.chapter, w.verse, w.position
+              LIMIT 700000"
+        );
+        $stmt->execute([$lang]);
+
+        $process_verse = function (array $words) use (&$phrase_forms, $letter_count, $signature, $lang): bool {
+            $n = count($words);
+            for ($i = 0; $i < $n; $i++) {
+                $letters_run = '';
+                $text_parts = [];
+                $meaning_parts = [];
+                for ($j = $i; $j < $n && $j < $i + 6; $j++) {
+                    $letters_run .= $words[$j]['_letters'];
+                    $run_len = mb_strlen($letters_run);
+                    if ($run_len > $letter_count) break;
+                    $text_parts[] = $words[$j]['text_original'];
+                    if (!empty($words[$j]['translation'])) $meaning_parts[] = $words[$j]['translation'];
+                    if ($j === $i) continue; // phrases require at least two words
+                    if ($run_len !== $letter_count) continue;
+                    if (formation_signature($letters_run) !== $signature) continue;
+
+                    $phrase_text = implode(' ', $text_parts);
+                    $key = formation_letters($phrase_text, $lang) . '|' . implode(' ', $meaning_parts);
+                    if (!isset($phrase_forms[$key])) {
+                        $phrase_forms[$key] = [
+                            'kind' => 'phrase',
+                            'text' => $phrase_text,
+                            'letters' => $letters_run,
+                            'translation' => implode(' / ', $meaning_parts),
+                            'occurrences' => 0,
+                            'refs' => [],
+                            'seen' => [],
+                        ];
+                    }
+                    formation_push_occurrence($phrase_forms[$key], $words[$i]);
+                    if (count($phrase_forms) >= SEARCH_FORMATION_PHRASE_LIMIT * 3) return false;
+                }
+            }
+            return true;
+        };
+
+        $current_key = null;
+        $verse_words = [];
+        while ($row = $stmt->fetch()) {
+            $vkey = $row['osis_code'] . '|' . (int)$row['chapter'] . '|' . (int)$row['verse'];
+            if ($current_key !== null && $vkey !== $current_key) {
+                if (!$process_verse($verse_words)) break;
+                $verse_words = [];
+            }
+            $current_key = $vkey;
+            $clean = formation_letters((string)($row['text_search'] ?: $row['text_original']), $lang);
+            if ($clean === '') continue;
+            $verse_words[] = [
+                'text_original' => $row['text_original'],
+                'translation' => $row['translation'],
+                'osis_code' => $row['osis_code'],
+                'chapter' => $row['chapter'],
+                'verse' => $row['verse'],
+                '_letters' => $clean,
+            ];
+        }
+        if (!empty($verse_words)) $process_verse($verse_words);
+
+        foreach ($phrase_forms as &$group) unset($group['seen']);
+        unset($group);
+    }
+
+    $phrase_forms = array_values($phrase_forms);
+    usort($phrase_forms, fn($a, $b) => ($b['occurrences'] <=> $a['occurrences']) ?: strcmp((string)$a['text'], (string)$b['text']));
+    $phrase_forms = array_slice($phrase_forms, 0, SEARCH_FORMATION_PHRASE_LIMIT);
+
+    return [
+        'target' => $empty['target'],
+        'word_forms' => $word_forms,
+        'phrase_forms' => $phrase_forms,
+        'too_large' => $too_large,
+    ];
 }
 
 // ------------------------------------------------------------------

@@ -134,6 +134,17 @@ try {
             echo json_encode(bible_search_verses($mode, $q, $lang));
             break;
 
+        case 'formations':
+            $lang = trim($_GET['lang'] ?? '');
+            $text = trim($_GET['text'] ?? '');
+            if ($text === '' || !in_array($lang, ['Hebrew', 'Greek'], true)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'lang and text are required']);
+                break;
+            }
+            echo json_encode(bible_letter_formations($lang, $text), JSON_UNESCAPED_UNICODE);
+            break;
+
         case 'els_fetch':
             $book    = trim($_GET['book']    ?? '');
             $chap    = (int)($_GET['chapter'] ?? 0);

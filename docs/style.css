@@ -501,6 +501,111 @@ a.gem-factor-link:hover { border-bottom-style: solid; }
 .comparison-text.eng {
     color: #111827;
 }
+.formations-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.formations-head h3 {
+    margin: 1px 0 0;
+    font-size: 16px;
+    line-height: 1.2;
+}
+.formation-refresh {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 700;
+}
+.formation-refresh:hover {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+}
+.formation-status,
+.formation-note,
+.formation-empty {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.4;
+}
+.formations-results {
+    display: grid;
+    gap: 12px;
+    margin-top: 10px;
+}
+.formation-target {
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+.formation-target-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.formation-target-top span,
+.formation-type {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.formation-target-top strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 20px;
+    line-height: 1.2;
+}
+.formation-target-top strong.heb {
+    font-family: var(--hebrew);
+    direction: rtl;
+}
+.formation-target-top strong.grk {
+    font-family: var(--greek);
+}
+.formation-target-top em {
+    flex: 0 0 auto;
+    color: var(--accent);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+}
+.formation-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+.formation-card {
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fbfcfd;
+}
+.formation-card strong {
+    display: block;
+    margin: 2px 0;
+    color: var(--fg);
+    font-size: 17px;
+    line-height: 1.25;
+}
+.formation-card span {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
 .export-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1297,6 +1402,7 @@ body.bible-mobile-ready .word-cell,
 body.bible-mobile-ready .gem-clear,
 body.bible-mobile-ready .gem-link-btn,
 body.bible-mobile-ready .study-tabs button,
+body.bible-mobile-ready .formation-refresh,
 body.bible-mobile-ready .export-grid button {
     touch-action: manipulation;
 }
@@ -1613,7 +1719,7 @@ body.bible-mobile-ready .export-grid button {
     body.bible-mobile-ready .study-tabs {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 5px;
         padding: 4px;
         border-color: rgba(14, 98, 120, 0.14);
@@ -1739,6 +1845,35 @@ body.bible-mobile-ready .export-grid button {
 
     body.bible-mobile-ready .comparison-text.grk {
         font-size: 20px;
+    }
+
+    body.bible-mobile-ready .formations-head {
+        align-items: start;
+    }
+
+    body.bible-mobile-ready .formation-refresh {
+        min-height: 38px;
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    body.bible-mobile-ready .formation-card-grid {
+        grid-template-columns: 1fr;
+        gap: 7px;
+    }
+
+    body.bible-mobile-ready .formation-target {
+        padding-top: 11px;
+    }
+
+    body.bible-mobile-ready .formation-target-top strong {
+        font-size: 22px;
+    }
+
+    body.bible-mobile-ready .formation-card {
+        border-color: rgba(23, 25, 28, 0.08);
+        border-radius: 8px;
+        background: #ffffff;
     }
 
     body.bible-mobile-ready .export-grid {
